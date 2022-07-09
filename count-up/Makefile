@@ -1,8 +1,8 @@
 .PHONY: clean
 
-OUTPUT    := no.elf
+OUTPUT    := count-up.elf
 SOURCEDIR := source
-BUILDDIR  := build
+RESDIR    := ../resource
 LIBDIR    := ../../libraries
 
 # Actual libraries the project uses (used for linking)
@@ -23,13 +23,13 @@ LDFLAGS := --oformat elf_amd64 --nostdlib
 
 # Source to compile.
 LIBDSOURCE := $(shell find $(LIBS) -type f -name '*.d')
-DSOURCE    := $(shell find $(SOURCEDIR) -type f -name '*.d')
+DSOURCE    := $(shell find $(SOURCEDIR) -type f -name '*.d') $(RESDIR)/entrypoint.d
 OBJ        := $(DSOURCE:.d=.o) $(LIBDSOURCE:.d=.o)
 
 all: $(OUTPUT)
 
 $(OUTPUT): $(OBJ)
-	@$(LD) $(LDFLAGS) $(OBJ) -T $(BUILDDIR)/link.ld -o $@
+	@$(LD) $(LDFLAGS) $(OBJ) -T $(RESDIR)/link.ld -o $@
 
 %.o: %.d
 	@$(DC) $(DFLAGS) -I=$(SOURCEDIR) -I=$(LIBDIR) -c $< -of=$@
